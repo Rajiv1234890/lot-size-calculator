@@ -4,139 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Lot Size Calculator</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-            background-color: #f4f4f9;
-        }
-
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        h2 {
-            text-align: center;
-        }
-
-        label {
-            display: block;
-            margin: 10px 0 5px;
-        }
-
-        input[type="number"], input[type="button"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-
-        input[type="button"] {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-        }
-
-        .result {
-            font-size: 1.2em;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .error {
-            color: red;
-            text-align: center;
-        }
-    </style>
 </head>
 <body>
+    <h1>Lot Size Calculator</h1>
+    <label for="riskAmount">Risk Amount ($):</label>
+    <input type="number" id="riskAmount" value="500"><br><br>
 
-    <div class="container">
-        <h2>Lot Size Calculator</h2>
-        
-        <label for="entryPrice">Entry Price ($):</label>
-        <input type="number" id="entryPrice" placeholder="Enter entry price" step="0.0001">
+    <label for="stopLossPips">Stop Loss (Pips):</label>
+    <input type="number" id="stopLossPips" value="7.9"><br><br>
 
-        <label for="slPrice">Stop Loss Price ($):</label>
-        <input type="number" id="slPrice" placeholder="Enter stop loss price" step="0.0001">
+    <label for="pipValue">Pip Value (USD):</label>
+    <input type="number" id="pipValue" value="10"><br><br>
 
-        <label for="riskAmount">Risk Amount ($) per SL:</label>
-        <input type="number" id="riskAmount" placeholder="Enter risk amount per SL">
+    <button onclick="calculateLotSize()">Calculate Lot Size</button><br><br>
 
-        <label for="pairType">Currency Pair:</label>
-        <select id="pairType">
-            <option value="normal">Normal Pair (EUR/USD, GBP/USD, etc.)</option>
-            <option value="jpy">JPY Pair (USD/JPY, GBP/JPY, etc.)</option>
-        </select>
-
-        <label for="lotType">Lot Size Type:</label>
-        <select id="lotType">
-            <option value="1.00">Standard Lot (1.00)</option>
-            <option value="0.10">Mini Lot (0.10)</option>
-            <option value="0.01">Micro Lot (0.01)</option>
-        </select>
-
-        <input type="button" value="Calculate Lot Size" onclick="calculateLotSize()">
-
-        <div class="result" id="result"></div>
-        <div class="error" id="error"></div>
-    </div>
+    <h3>Calculated Lot Size: <span id="lotSize"></span></h3>
 
     <script>
         function calculateLotSize() {
-            // Clear any previous error message
-            document.getElementById("error").innerHTML = "";
-
-            // Get values from input fields
-            const entryPrice = parseFloat(document.getElementById("entryPrice").value);
-            const slPrice = parseFloat(document.getElementById("slPrice").value);
-            const riskAmount = parseFloat(document.getElementById("riskAmount").value);
-            const pairType = document.getElementById("pairType").value;
-            const lotType = parseFloat(document.getElementById("lotType").value);
-
-            // Validate input
-            if (isNaN(entryPrice) || isNaN(slPrice) || isNaN(riskAmount) || entryPrice <= 0 || slPrice <= 0 || riskAmount <= 0) {
-                document.getElementById("error").innerHTML = "Please enter valid positive numbers.";
-                return;
-            }
-
-            // Calculate pip difference (entry price - stop loss price)
-            const pipDifference = Math.abs(entryPrice - slPrice);
-
-            // Define pip values based on lot size and pair type
-            let pipValue;
-
-            if (pairType === "normal") {
-                if (lotType === 1.00) {
-                    pipValue = 10; // Standard Lot
-                } else if (lotType === 0.10) {
-                    pipValue = 1;  // Mini Lot
-                } else if (lotType === 0.01) {
-                    pipValue = 0.10; // Micro Lot
-                }
-            } else if (pairType === "jpy") {
-                if (lotType === 1.00) {
-                    pipValue = 8; // Standard Lot for JPY
-                } else if (lotType === 0.10) {
-                    pipValue = 0.80; // Mini Lot for JPY
-                } else if (lotType === 0.01) {
-                    pipValue = 0.08; // Micro Lot for JPY
-                }
-            }
+            // Get values from inputs
+            var riskAmount = document.getElementById('riskAmount').value;
+            var stopLossPips = document.getElementById('stopLossPips').value;
+            var pipValue = document.getElementById('pipValue').value;
 
             // Calculate lot size
-            const lotSize = riskAmount / (pipDifference * pipValue);
+            var lotSize = riskAmount / (stopLossPips * pipValue);
 
-            // Display the result
-            document.getElementById("result").innerHTML = `Lot Size: ${lotSize.toFixed(2)}`;
+            // Display result
+            document.getElementById('lotSize').textContent = lotSize.toFixed(2);
         }
     </script>
-
 </body>
 </html>
